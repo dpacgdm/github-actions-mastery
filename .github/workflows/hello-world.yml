@@ -1,0 +1,26 @@
+# 1. The name of your workflow. This is what will be displayed in the Actions tab.
+name: "Hello World Workflow"
+
+# 2. The event that triggers this workflow. We are using 'workflow_dispatch',
+# which allows for manual triggering.
+on:
+  workflow_dispatch:
+
+# 3. The jobs to run. A workflow is made up of one or more jobs.
+jobs:
+  # 4. The name of our first job. You can name this anything you like.
+  say-hello:
+    # 5. The runner to use. We will use the latest GitHub-hosted Ubuntu runner.
+    runs-on: ubuntu-latest
+
+    # 6. The steps in the job. A job is a sequence of steps.
+    steps:
+      # 7. A single step. You can give it a name for clarity.
+      - name: "Print a greeting"
+        # 8. The 'run' keyword tells the runner to execute a shell command.
+        run: echo "Hello, world! I am running on a GitHub-hosted runner."
+
+      - name: "Print a multi-line message"
+        run: |
+          echo "This is the first line."
+          echo "This is the second line."
