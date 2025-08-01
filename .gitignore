@@ -1,0 +1,27 @@
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+
+# Exclude all .tfvars files, which are likely to contain sensitive data, such as
+# password, private keys, and other secrets. Cautious use of negation may be
+# required explicit sharing of certain .tfvars files.
+*.tfvars
+*.tfvars.json
+
+# Ignore override files as they are usually used for local customizations
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Include example files so that they are included in this project.
+!example_*.tf
+
+# Include provider configuration since that's sometimes useful for documentation.
+!provider.tf

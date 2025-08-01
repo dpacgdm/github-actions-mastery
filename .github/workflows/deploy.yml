@@ -1,0 +1,76 @@
+name: "Infrastructure Deployment"
+
+on:
+  # Run this workflow on pushes to the main branch
+  push:
+    branches: [ "main" ]
+  # And also allow it to be run manually
+  workflow_dispatch:
+
+jobs:
+  # --- JOB 1: Deploy to the Development Environment ---
+  deploy-dev:
+    # This is the human-readable name that will appear in the GitHub UI
+    name: "Deploy to Development"
+    runs-on: ubuntu-latest
+    # This links the job to the 'dev' environment in GitHub settings
+    environment: dev
+    
+    steps:
+      # Each item in the steps list starts with a '-'
+      - name: "Checkout code"
+        uses: actions/checkout@v3
+
+      - name: "Authenticate to Google Cloud"
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: "Set up Terraform"
+        uses: hashicorp/setup-terraform@v2
+        
+      # Change to the directory where your terraform code lives.
+      # This is a critical step if your code isn't in the root.
+      # For our project, let's assume we moved the Terraform code
+      # into a directory called 'infra' for good practice.
+      # We will need to create this directory.
+      - name: "Terraform Init"
+        run: terraform init
+
+      - name: "Terraform Plan"
+        run: terraform plan
+
+      - name: "Terraform Apply"
+        run: terraform apply -auto-approve
+
+
+  # --- JOB 2: Deploy to the Production Environment ---
+  deploy-prod:
+    name: "Deploy to Production"
+    # This 'needs' keyword creates the dependency.
+    # This job will not start until 'deploy-dev' has finished successfully.
+    needs: deploy-dev
+    runs-on: ubuntu-latest
+    # This links to the 'prod' environment, which has our manual approval rule.
+    environment: prod
+
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@vv3
+
+      - name: "Authenticate to Google Cloud"
+        uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: "Set up Terraform"
+        uses: hashicorp/setup-terraform@v2
+      
+      - name: "Terraform Init"
+        run: terraform init
+
+      - name: "Terraform Plan"
+        run: terraform plan
+        
+      - name: "Terraform Apply"
+        run: terraform apply -auto-approve
